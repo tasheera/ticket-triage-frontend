@@ -81,27 +81,49 @@ function SubmitPage({ }: Props) {
           <CardTitle className='bold font-bold'>Submit a Ticket</CardTitle>
         </CardHeader>
         <CardContent >
-          <form onSubmit={handleSubmit} className='space-y-4'>
+          <form onSubmit={handleSubmit}>
             <div className='flex flex-col gap-2'>
               <Label htmlFor="customerName">Name</Label>
-              <Input id='customerName' value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-              {error.customerName && <p className='text-sm text-red-600'> {error.customerName}</p>}
+              <div>
+                <Input id='customerName' value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+                <div className='min-h-[20px]'>
+
+                  {error.customerName && <p className='text-sm text-red-600'> {error.customerName}</p>}
+                </div>
+              </div>
             </div>
+
             <div className='flex flex-col gap-2'>
               <Label htmlFor='customerEmail'>Email</Label>
-              <Input id='customerEmail' value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} type='email' />
-              {error.customerEmail && <p className='text-sm text-red-600'> {error.customerEmail}</p>}
+              <div>
+                <Input id='customerEmail' value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} type='email' />
+                <div className='min-h-[20px]'>
+
+                  {error.customerEmail && <p className='text-sm text-red-600'> {error.customerEmail}</p>}
+                </div>
+              </div>
             </div>
+
             <div className='flex flex-col gap-2'>
               <Label htmlFor='subject' >Subject</Label>
-              <Input id='subject' value={subject} onChange={(e) => setSubject(e.target.value)} />
-              {error.subject && <p className='text-sm text-red-600'> {error.subject}</p>}
+              <div>
+                <Input id='subject' value={subject} onChange={(e) => setSubject(e.target.value)} />
+                <div className='min-h-[20px]'>
+
+                  {error.subject && <p className='text-sm text-red-600'> {error.subject}</p>}
+                </div>
+              </div>
             </div>
 
             <div className='flex flex-col gap-2'>
               <Label htmlFor='description' >Description</Label>
-              <Textarea id='description' value={description} onChange={(e) => setDescription(e.target.value)} rows={5} />
-              {error.description && <p className="text-sm text-red-600 mt-1">{error.description}</p>}
+              <div>
+                <Textarea id='description' value={description} onChange={(e) => setDescription(e.target.value)} rows={5} />
+                <div className='min-h-[20px]'>
+
+                  {error.description && <p className="text-sm text-red-600 mt-1">{error.description}</p>}
+                </div>
+              </div>
             </div>
 
             {submitError && (
@@ -109,7 +131,7 @@ function SubmitPage({ }: Props) {
             )}
 
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </form>
