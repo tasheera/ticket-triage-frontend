@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { error } from 'console'
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 
 type Props = {}
 
@@ -16,6 +16,9 @@ function SubmitPage({ }: Props) {
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isSucess, setIsSucess] = useState(false)
 
   function validate() {
     const newErrors: Record<string, string> = {};
@@ -32,11 +35,45 @@ function SubmitPage({ }: Props) {
 
   }
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
-    //api
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customerName, customerEmail, subject, description })
+      });
+
+      if (!response.ok) {
+        const problem = await response.json();
+        setSubmitError(problem.detail ?? "Something went wrong, please try again")
+        return;
+      }
+
+      setIsSucess(true);
+
+    } catch {
+      setSubmitError("Could not reach the server. Check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+
   }
+
+  if (isSucess) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-2xl font-bold mb-2">Ticket received</h1>
+        <p className="text-muted-foreground">We'll get back to you as soon as possible.</p>
+      </main>
+    );
+  }
+
+
   return (
     <div className='flex min-h-screen justify-center px-4 py-12'>
       <Card className='w-full max-w-md'>
@@ -66,7 +103,15 @@ function SubmitPage({ }: Props) {
               <Textarea id='description' value={description} onChange={(e) => setDescription(e.target.value)} rows={5} />
               {error.description && <p className="text-sm text-red-600 mt-1">{error.description}</p>}
             </div>
-            <Button type='submit' className="w-full"> Submit</Button>
+
+            {submitError && (
+              <p className="text-sm text-red-600">{submitError}</p>
+            )}
+
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </CardContent>
       </Card>
