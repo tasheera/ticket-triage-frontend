@@ -24,7 +24,7 @@ function SubmitPage({ }: Props) {
     const newErrors: Record<string, string> = {};
     if (!customerName.trim()) newErrors.customerName = "Name is required";
     const emailInput = document.getElementById('customerEmail') as HTMLInputElement;
-    if (!emailInput.checkValidity()) {
+    if (!emailInput.checkValidity() || !customerEmail.trim()) {
       newErrors.customerEmail = "Enter a valid email";
     }
     if (!subject.trim()) newErrors.subject = "Subject is required";
@@ -67,7 +67,7 @@ function SubmitPage({ }: Props) {
   if (isSucess) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-        <h1 className="text-2xl font-bold mb-2">Ticket received</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-2">Ticket received</h1>
         <p className="text-muted-foreground">We'll get back to you as soon as possible.</p>
       </main>
     );
@@ -75,10 +75,10 @@ function SubmitPage({ }: Props) {
 
 
   return (
-    <div className='flex min-h-screen justify-center px-4 py-12'>
+    <div className='flex min-h-screen justify-center px-4 py-8 sm:py-12'>
       <Card className='w-full max-w-md'>
         <CardHeader >
-          <CardTitle className='bold font-bold'>Submit a Ticket</CardTitle>
+          <CardTitle className='text-lg sm:text-xl font-bold'>Submit a Ticket</CardTitle>
         </CardHeader>
         <CardContent >
           <form onSubmit={handleSubmit}>
