@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { json } from 'stream/consumers';
 
-const sleep = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
+// const sleep = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
 
 
 type Ticket = {
@@ -50,6 +50,12 @@ const sentimentColors: Record<string, string> = {
     Neutral: "bg-gray-100 text-gray-600",
     Positive: "bg-green-50 text-green-700",
     Unclassified: "bg-gray-100 text-gray-500",
+};
+
+const statusColors: Record<string, string> = {
+    Open: "bg-blue-100 text-blue-700",
+    InProgress: "bg-purple-100 text-purple-700",
+    Resolved: "bg-green-100 text-green-700",
 };
 
 function DashboardClient() {
@@ -139,7 +145,6 @@ function DashboardClient() {
                     </Button>
                 </div>
 
-                {/* Your main content goes here */}
                 {/* Filters */}
                 <div className="flex flex-wrap gap-3 mb-6">
                     <select
@@ -212,18 +217,18 @@ function DashboardClient() {
 
                 {/* Table */}
                 {!isLoading && !error && tickets.length > 0 && (
-                    <div className="max-h-[70vh] overflow-y-auto rounded-lg border">{/* chaange */}
+                    <div className="max-h-[70vh] overflow-x-auto overflow-y-auto rounded-lg border">
                         <Table>
-                            <TableHeader>
+                            <TableHeader className="sticky top-0 z-10 bg-white shadow-sm">
                                 <TableRow>
                                     <TableHead className="w-12">#</TableHead>
                                     <TableHead>Subject</TableHead>
-                                    <TableHead>Customer</TableHead>
-                                    <TableHead>Category</TableHead>
+                                    <TableHead className="hidden sm:table-cell">Customer</TableHead>
+                                    <TableHead className="hidden md:table-cell">Category</TableHead>
                                     <TableHead>Priority</TableHead>
-                                    <TableHead>Sentiment</TableHead>
+                                    <TableHead className="hidden md:table-cell">Sentiment</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Submitted</TableHead>
+                                    <TableHead className="hidden lg:table-cell">Submitted</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -231,7 +236,7 @@ function DashboardClient() {
                                     <TableRow
                                         key={ticket.id}
                                         onClick={() => router.push(`/dashboard/${ticket.id}`)}
-                                        className="cursor-pointer"
+                                        className="cursor-pointer hover:bg-muted/50 transition-colors even:bg-muted/20"
                                     >
                                         <TableCell className="text-muted-foreground">
                                             {ticket.id}
@@ -239,10 +244,10 @@ function DashboardClient() {
                                         <TableCell className="font-medium max-w-50 truncate">
                                             {ticket.subject}
                                         </TableCell>
-                                        <TableCell className="text-muted-foreground max-w-37.5 truncate">
+                                        <TableCell className="hidden sm:table-cell text-muted-foreground max-w-37.5 truncate">
                                             {ticket.customerName}
                                         </TableCell>
-                                        <TableCell className="text-muted-foreground">
+                                        <TableCell className="hidden md:table-cell text-muted-foreground">
                                             {ticket.category ?? "—"}
                                         </TableCell>
                                         <TableCell>
@@ -253,7 +258,7 @@ function DashboardClient() {
                                                 {ticket.priority ?? "Unclassified"}
                                             </span>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden md:table-cell">
                                             <span
                                                 className={`px-2 py-1 rounded-full text-xs font-medium ${sentimentColors[ticket.sentiment ?? "Unclassified"]
                                                     }`}
@@ -261,10 +266,14 @@ function DashboardClient() {
                                                 {ticket.sentiment ?? "—"}
                                             </span>
                                         </TableCell>
-                                        <TableCell className="text-muted-foreground">
-                                            {ticket.status}
+                                        <TableCell>
+                                            <span
+                                                className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status] ?? "bg-gray-100 text-gray-600"}`}
+                                            >
+                                                {ticket.status === "InProgress" ? "In Progress" : ticket.status}
+                                            </span>
                                         </TableCell>
-                                        <TableCell className="text-muted-foreground whitespace-nowrap">
+                                        <TableCell className="hidden lg:table-cell text-muted-foreground whitespace-nowrap">
                                             {new Date(ticket.createdAt).toLocaleDateString()}
                                         </TableCell>
                                     </TableRow>
