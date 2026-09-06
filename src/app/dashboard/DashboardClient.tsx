@@ -29,13 +29,13 @@ type Ticket = {
     createdAt: string;
 };
 
-const PRIORITY_ORDER: Record<string, number> = {
-    Urgent: 0,
-    High: 1,
-    Medium: 2,
-    Low: 3,
-    Unclassified: 4,
-};
+// const PRIORITY_ORDER: Record<string, number> = {
+//     Urgent: 0,
+//     High: 1,
+//     Medium: 2,
+//     Low: 3,
+//     Unclassified: 4,
+// };
 
 const priorityColors: Record<string, string> = {
     Urgent: "bg-red-100 text-red-700",
@@ -108,12 +108,12 @@ function DashboardClient() {
             }
 
             const data: Ticket[] = await response.json();
-            const sorted = [...data].sort(
-                (a, b) =>
-                    (PRIORITY_ORDER[a.priority ?? "Unclassified"] ?? 99) -
-                    (PRIORITY_ORDER[b.priority ?? "Unclassified"] ?? 99)
-            );
-            setTickets(sorted);
+            // const sorted = [...data].sort(
+            //     (a, b) =>
+            //         (PRIORITY_ORDER[a.priority ?? "Unclassified"] ?? 99) -
+            //         (PRIORITY_ORDER[b.priority ?? "Unclassified"] ?? 99)
+            // );
+            setTickets(data);
         } catch {
             setError("Could not reach the server.");
         } finally {
