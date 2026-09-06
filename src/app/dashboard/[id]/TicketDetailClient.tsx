@@ -40,6 +40,9 @@ export default function TicketDetailClient({ id }: { id: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [isResolving, setIsResolving] = useState(false);
+  const [resolveError, setResolveError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchTicket();
   }, [id]);
@@ -71,6 +74,31 @@ export default function TicketDetailClient({ id }: { id: string }) {
       setError("Could not reach the server.");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+
+  async function handleResolve() {
+    if (!ticket) return;
+    setIsResolving(true);
+    setResolveError(null);
+    try {
+      const response = await fetch(`/api/tickets/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Resolved" }),
+      });
+
+      if (!response.ok) {
+        setResolveError("Failed to resolve ticket. Try again.");
+        return;
+      }
+
+      setTicket((prev) => prev ? { ...prev, status: "Resolved" } : prev);
+    } catch {
+      setResolveError("Could not reach the server.");
+    } finally {
+      setIsResolving(false);
     }
   }
 
@@ -199,6 +227,31 @@ export default function TicketDetailClient({ id }: { id: string }) {
           )}
         </CardContent>
       </Card>
+
+
+
+      {ticket.status !== "Resolved" && (
+        <div className="flex flex-col gap-2">
+          <Button
+            onClick={handleResolve}
+            disabled={isResolving}
+            className="w-full sm:w-auto"
+          >
+            {isResolving ? "Resolving..." : "Mark as Resolved"}
+          </Button>
+          <div className="min-h-5">
+            {resolveError && (
+              <p className="text-sm text-red-600">{resolveError}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {ticket.status === "Resolved" && (
+        <p className="text-sm text-green-600 font-medium">
+          ✓ This ticket has been resolved
+        </p>
+      )}
 
     </main>
   );
