@@ -18,6 +18,29 @@ type Ticket = {
     createdAt: string;
 };
 
+const PRIORITY_ORDER: Record<string, number> = {
+    Urgent: 0,
+    High: 1,
+    Medium: 2,
+    Low: 3,
+    Unclassified: 4,
+};
+
+const priorityColors: Record<string, string> = {
+    Urgent: "bg-red-100 text-red-700",
+    High: "bg-orange-100 text-orange-700",
+    Medium: "bg-yellow-100 text-yellow-700",
+    Low: "bg-green-100 text-green-700",
+    Unclassified: "bg-gray-100 text-gray-600",
+};
+
+const sentimentColors: Record<string, string> = {
+    Frustrated: "bg-red-50 text-red-600",
+    Neutral: "bg-gray-100 text-gray-600",
+    Positive: "bg-green-50 text-green-700",
+    Unclassified: "bg-gray-100 text-gray-500",
+};
+
 function DashboardClient() {
 
     const [statusFilter, setStatusFilter] = useState("");
@@ -31,6 +54,8 @@ function DashboardClient() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+
 
     useEffect(() => {
         fetchTickets();
@@ -61,7 +86,12 @@ function DashboardClient() {
             }
 
             const data: Ticket[] = await response.json();
-            setTickets(data)
+            const sorted = [...data].sort(
+                (a, b) =>
+                    (PRIORITY_ORDER[a.priority ?? "Unclassified"] ?? 99) -
+                    (PRIORITY_ORDER[b.priority ?? "Unclassified"] ?? 99)
+            );
+            setTickets(sorted);
         } catch {
             setError("Could not reach the server.");
         }
@@ -71,7 +101,7 @@ function DashboardClient() {
     return (
         <div>
             {tickets.map((ticket) => {
-               return <p key={ticket.id}>{ticket.customerName}</p>
+                return <p key={ticket.id}>{ticket.customerName}</p>
             })}
         </div>
     )
