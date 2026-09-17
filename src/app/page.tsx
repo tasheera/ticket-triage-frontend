@@ -17,7 +17,7 @@ export default function Home() {
       </h1>
 
       <p className="text-base sm:text-lg text-slate-600 max-w-lg mb-8 leading-relaxed">
-        Submit a test support ticket and watch an LLM classify it by category, priority, and sentiment - complete with a reasoning explanation.
+        Submit a support ticket and watch an LLM classify it by category, priority, and sentiment - complete with a reasoning explanation.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
