@@ -50,6 +50,11 @@ function SubmitPage({ }: Props) {
 
       if (!response.ok) {
         const problem = await response.json();
+
+        if (response.status === 429) {
+          setSubmitError("Too many submissions. Please wait a minute before trying again.");
+          return;
+        }
         setSubmitError(problem.detail ?? "Something went wrong, please try again")
         return;
       }
