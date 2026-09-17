@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { error } from 'console'
-import React, { use, useState } from 'react'
+import Link from 'next/link'
+import React, { useState } from 'react'
 
 type Props = {}
 
@@ -71,20 +71,53 @@ function SubmitPage({ }: Props) {
 
   if (isSucess) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-        <h1 className="text-xl sm:text-2xl font-bold mb-2">Ticket received</h1>
-        <p className="text-muted-foreground">We'll get back to you as soon as possible.</p>
+      <main className="flex min-h-screen flex-col items-center justify-center px-4 text-center gap-4">
+        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 text-3xl">
+          ✓
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold">Ticket Submitted!</h1>
+        <p className="text-muted-foreground max-w-sm">
+          We've received your request and will get back to you as soon as possible
+        </p>
+        <Link
+          href="/"
+          className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium underline underline-offset-4 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          ← Back to Home
+        </Link>
       </main>
     );
   }
 
 
   return (
-    <div className='flex items-center min-h-screen justify-center px-4 py-8 sm:py-12'>
+    <div className='flex flex-col items-center min-h-screen justify-center px-4 py-8 sm:py-12 gap-6'>
+
+      <div className='flex flex-col items-center text-center gap-2 max-w-md w-full'>
+        <Link href='/' className='flex items-center gap-2 mb-1 group'>
+          <img
+            src="/icon.svg"
+            alt="AI ticket"
+            className="h-10 w-10"
+          />
+          <span className='text-lg font-bold tracking-tight group-hover:opacity-80 transition-opacity'>
+            AI Ticket Triage
+          </span>
+        </Link>
+
+        <h1 className='text-2xl sm:text-3xl font-bold tracking-tight'>Submit a Support Ticket</h1>
+
+        <p className='text-sm text-muted-foreground'>
+          Fill out the form below and our team will review your request as soon as possible.
+        </p>
+
+        <span className='inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground'>
+          <span className='h-1.5 w-1.5 rounded-full bg-green-500'></span>
+          Typical response time: under 2 hours
+        </span>
+      </div>
+
       <Card className='w-full max-w-md'>
-        <CardHeader >
-          <CardTitle className='text-lg sm:text-xl font-bold'>Submit a Ticket</CardTitle>
-        </CardHeader>
         <CardContent >
           <form onSubmit={handleSubmit}>
             <div className='flex flex-col gap-2'>
