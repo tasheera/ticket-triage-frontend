@@ -80,7 +80,7 @@ function SubmitPage({ }: Props) {
 
 
   return (
-    <div className='flex min-h-screen justify-center px-4 py-8 sm:py-12'>
+    <div className='flex items-center min-h-screen justify-center px-4 py-8 sm:py-12'>
       <Card className='w-full max-w-md'>
         <CardHeader >
           <CardTitle className='text-lg sm:text-xl font-bold'>Submit a Ticket</CardTitle>
@@ -91,7 +91,7 @@ function SubmitPage({ }: Props) {
               <Label htmlFor="customerName">Name</Label>
               <div>
                 <Input id='customerName' value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-                <div className='min-h-[20px]'>
+                <div className='min-h-5'>
 
                   {error.customerName && <p className='text-sm text-red-600'> {error.customerName}</p>}
                 </div>
@@ -102,7 +102,7 @@ function SubmitPage({ }: Props) {
               <Label htmlFor='customerEmail'>Email</Label>
               <div>
                 <Input id='customerEmail' value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} type='email' />
-                <div className='min-h-[20px]'>
+                <div className='min-h-5'>
 
                   {error.customerEmail && <p className='text-sm text-red-600'> {error.customerEmail}</p>}
                 </div>
@@ -113,7 +113,7 @@ function SubmitPage({ }: Props) {
               <Label htmlFor='subject' >Subject</Label>
               <div>
                 <Input id='subject' value={subject} onChange={(e) => setSubject(e.target.value)} />
-                <div className='min-h-[20px]'>
+                <div className='min-h-5'>
 
                   {error.subject && <p className='text-sm text-red-600'> {error.subject}</p>}
                 </div>
@@ -124,7 +124,7 @@ function SubmitPage({ }: Props) {
               <Label htmlFor='description' >Description</Label>
               <div>
                 <Textarea id='description' value={description} onChange={(e) => setDescription(e.target.value)} rows={5} />
-                <div className='min-h-[20px]'>
+                <div className='min-h-5'>
 
                   {error.description && <p className="text-sm text-red-600 mt-1">{error.description}</p>}
                 </div>
