@@ -67,7 +67,7 @@ export default function LoginPage() {
 
 
     return (
-        <main className='flex items-center justify-center min-h-screen py-8 sm:py-12'>
+        <main className='flex items-center justify-center min-h-screen py-8 sm:py-12 m-3 sm:m-0'>
             <Card className='w-full max-w-md'>
                 <CardHeader>
                     <CardTitle className='text-lg sm:text-2xl'>Login</CardTitle>
