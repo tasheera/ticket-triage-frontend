@@ -40,8 +40,8 @@ export default function TicketDetailClient({ id }: { id: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [isResolving, setIsResolving] = useState(false);
-  const [resolveError, setResolveError] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTicket();
@@ -77,28 +77,27 @@ export default function TicketDetailClient({ id }: { id: string }) {
     }
   }
 
-
-  async function handleResolve() {
+  async function handleStatusUpdate(status: string) {
     if (!ticket) return;
-    setIsResolving(true);
-    setResolveError(null);
+    setIsUpdating(true);
+    setUpdateError(null);
     try {
       const response = await fetch(`/api/tickets/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Resolved" }),
+        body: JSON.stringify({ status }),
       });
 
       if (!response.ok) {
-        setResolveError("Failed to resolve ticket. Try again.");
+        setUpdateError("Failed to update ticket status. Try again.");
         return;
       }
 
-      setTicket((prev) => prev ? { ...prev, status: "Resolved" } : prev);
+      setTicket((prev) => prev ? { ...prev, status } : prev);
     } catch {
-      setResolveError("Could not reach the server.");
+      setUpdateError("Could not reach the server.");
     } finally {
-      setIsResolving(false);
+      setIsUpdating(false);
     }
   }
 
@@ -230,18 +229,31 @@ export default function TicketDetailClient({ id }: { id: string }) {
 
 
 
-      {ticket.status !== "Resolved" && (
+      {(ticket.status === "Open" || ticket.status === "InProgress") && (
         <div className="flex flex-col gap-2">
-          <Button
-            onClick={handleResolve}
-            disabled={isResolving}
-            className="w-full sm:w-auto"
-          >
-            {isResolving ? "Resolving..." : "Mark as Resolved"}
-          </Button>
+
+          <div className="flex gap-2">
+            {ticket.status !== "InProgress" && (
+
+              <Button
+                variant="outline"
+                onClick={() => handleStatusUpdate("InProgress")}
+                disabled={isUpdating}
+              >
+                {isUpdating ? "Updating..." : "Mark as In Progress"}
+              </Button>
+            )}
+
+            <Button
+              onClick={() => handleStatusUpdate("Resolved")}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Updating..." : "Mark as Resolved"}
+            </Button>
+          </div>
           <div className="min-h-5">
-            {resolveError && (
-              <p className="text-sm text-red-600">{resolveError}</p>
+            {updateError && (
+              <p className="text-sm text-red-600">{updateError}</p>
             )}
           </div>
         </div>
