@@ -4,35 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-type Ticket = {
-  id: number;
-  customerName: string;
-  customerEmail: string;
-  subject: string;
-  description: string;
-  category: string | null;
-  priority: string | null;
-  sentiment: string | null;
-  aiReasoning: string | null;
-  status: string;
-  createdAt: string;
-};
-
-const priorityColors: Record<string, string> = {
-  Urgent: "bg-red-100 text-red-700",
-  High: "bg-orange-100 text-orange-700",
-  Medium: "bg-yellow-100 text-yellow-700",
-  Low: "bg-green-100 text-green-700",
-  Unclassified: "bg-gray-100 text-gray-600",
-};
-
-const sentimentColors: Record<string, string> = {
-  Frustrated: "bg-red-50 text-red-600",
-  Neutral: "bg-gray-100 text-gray-600",
-  Positive: "bg-green-50 text-green-700",
-  Unclassified: "bg-gray-100 text-gray-500",
-};
+import { priorityColors, sentimentColors, statusColors } from "@/lib/ticketStyles";
+import { Ticket } from "@/types/ticket";
 
 export default function TicketDetailClient({ id }: { id: string }) {
   const router = useRouter();
@@ -142,12 +115,7 @@ export default function TicketDetailClient({ id }: { id: string }) {
       {/*subject and status */}
       <div className="flex items-start justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">{ticket.subject}</h1>
-        <span className={`shrink-0 px-3 py-1 rounded-full text-sm font-medium ${ticket.status === "Resolved"
-          ? "bg-green-100 text-green-700"
-          : ticket.status === "InProgress"
-            ? "bg-blue-100 text-blue-700"
-            : "bg-gray-100 text-gray-600"
-          }`}>
+        <span className={`shrink-0 px-3 py-1 rounded-full text-sm font-medium ${statusColors[ticket.status]}`}>
           {ticket.status}
         </span>
       </div>

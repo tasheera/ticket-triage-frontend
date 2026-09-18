@@ -9,25 +9,14 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Ticket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { json } from 'stream/consumers';
+import { priorityColors, sentimentColors, statusColors} from "@/lib/ticketStyles";
+import { Ticket } from "@/types/ticket";
+
 
 // const sleep = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
 
-
-type Ticket = {
-    id: number;
-    customerName: string;
-    customerEmail: string;
-    subject: string;
-    category: string | null;
-    priority: string | null;
-    sentiment: string | null;
-    status: string;
-    createdAt: string;
-};
 
 // const PRIORITY_ORDER: Record<string, number> = {
 //     Urgent: 0,
@@ -36,27 +25,6 @@ type Ticket = {
 //     Low: 3,
 //     Unclassified: 4,
 // };
-
-const priorityColors: Record<string, string> = {
-    Urgent: "bg-red-100 text-red-700",
-    High: "bg-orange-100 text-orange-700",
-    Medium: "bg-yellow-100 text-yellow-700",
-    Low: "bg-green-100 text-green-700",
-    Unclassified: "bg-gray-100 text-gray-600",
-};
-
-const sentimentColors: Record<string, string> = {
-    Frustrated: "bg-red-50 text-red-600",
-    Neutral: "bg-gray-100 text-gray-600",
-    Positive: "bg-green-50 text-green-700",
-    Unclassified: "bg-gray-100 text-gray-500",
-};
-
-const statusColors: Record<string, string> = {
-    Open: "bg-blue-100 text-blue-700",
-    InProgress: "bg-purple-100 text-purple-700",
-    Resolved: "bg-green-100 text-green-700",
-};
 
 function DashboardClient() {
 
