@@ -9,10 +9,14 @@ export async function GET(request: Request) {
         const status = searchParams.get("status");
         const priority = searchParams.get("priority");
         const category = searchParams.get("category");
+        const page = searchParams.get("page");
+        const pageSize = searchParams.get("pageSize");
 
         if (status) params.set("status", status);
         if (priority) params.set("priority", priority);
         if (category) params.set("category", category);
+        if (page) params.set("page", page);
+        if (pageSize) params.set("pageSize", pageSize);
 
         const queryString = params.toString();
         const url = `${process.env.BACKEND_URL}/api/tickets${queryString ? `?${queryString}` : ""}`;
