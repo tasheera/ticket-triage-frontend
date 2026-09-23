@@ -195,9 +195,9 @@ function DashboardClient() {
 
                 {/* Table */}
                 {!isLoading && !error && tickets.length > 0 && (
-                    <div className="overflow-x-auto rounded-lg border">
+                    <div className="rounded-lg border [&>div]:max-h-[70vh]">
                         <Table>
-                            <TableHeader className="bg-white">
+                            <TableHeader className="sticky top-0 z-10 bg-white shadow-sm">
                                 <TableRow>
                                     <TableHead className="w-12">#</TableHead>
                                     <TableHead>Subject</TableHead>
@@ -274,7 +274,9 @@ function DashboardClient() {
                             onClick={() => setQuery(prev => ({ ...prev, page: prev.page - 1 }))}
                             disabled={query.page === 1}
                         >
-                            ← Previous
+                            ←
+                            <span className="hidden sm:block"> Previous</span>
+
                         </Button>
 
                         {getPageNumbers().map((p, i) =>
@@ -301,7 +303,9 @@ function DashboardClient() {
                             onClick={() => setQuery(prev => ({ ...prev, page: prev.page + 1 }))}
                             disabled={query.page === totalPages}
                         >
-                            Next →
+                            →
+                            <span className="hidden sm:block"> Next</span>
+
                         </Button>
                     </div>
                 )}
