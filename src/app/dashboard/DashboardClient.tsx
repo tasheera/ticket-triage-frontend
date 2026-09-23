@@ -11,8 +11,8 @@ import {
 } from '@/components/ui/table';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { priorityColors, sentimentColors, statusColors} from "@/lib/ticketStyles";
-import { Ticket } from "@/types/ticket";
+import { priorityColors, sentimentColors, statusColors } from "@/lib/ticketStyles";
+import { Ticket, PagedResponse } from "@/types/ticket";
 
 
 // const sleep = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
@@ -26,25 +26,29 @@ import { Ticket } from "@/types/ticket";
 //     Unclassified: 4,
 // };
 
+const PAGE_SIZE = 20;
+
 function DashboardClient() {
 
-    const [statusFilter, setStatusFilter] = useState("");
-    const [priorityFilter, setPriorityFilter] = useState("");
-    const [categoryFilter, setCategoryFilter] = useState("");
+    const [query, setQuery] = useState({
+        statusFilter: "",
+        priorityFilter: "",
+        categoryFilter: "",
+        page: 1,
+    });
 
     const [tickets, setTickets] = useState<Ticket[]>([]);
-
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
 
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-
-
     useEffect(() => {
         fetchTickets();
-    }, [statusFilter, priorityFilter, categoryFilter]);
+    }, [query]);
 
     async function fetchTickets() {
         setIsLoading(true);
@@ -57,13 +61,13 @@ function DashboardClient() {
 
             const params = new URLSearchParams();
 
-            if (statusFilter) params.set("status", statusFilter);
-            if (priorityFilter) params.set("priority", priorityFilter);
-            if (categoryFilter) params.set("category", categoryFilter);
+            if (query.statusFilter) params.set("status", query.statusFilter);
+            if (query.priorityFilter) params.set("priority", query.priorityFilter);
+            if (query.categoryFilter) params.set("category", query.categoryFilter);
+            params.set("page", String(query.page));
+            params.set("pageSize", String(PAGE_SIZE));
 
-            const response = await fetch(
-                `/api/tickets${params.toString() ? `?${params}` : ""}`
-            );
+            const response = await fetch(`/api/tickets?${params}`);
 
             if (response.status === 401) {
                 router.push("/login");
@@ -75,19 +79,15 @@ function DashboardClient() {
                 return;
             }
 
-            const data: Ticket[] = await response.json();
-            // const sorted = [...data].sort(
-            //     (a, b) =>
-            //         (PRIORITY_ORDER[a.priority ?? "Unclassified"] ?? 99) -
-            //         (PRIORITY_ORDER[b.priority ?? "Unclassified"] ?? 99)
-            // );
-            setTickets(data);
+            const data: PagedResponse<Ticket> = await response.json();
+            setTickets(data.items);
+            setTotalPages(data.totalPages);
+            setTotalCount(data.totalCount);
         } catch {
             setError("Could not reach the server.");
         } finally {
             setIsLoading(false);
         }
-
     }
 
     async function handleLogout() {
@@ -95,8 +95,21 @@ function DashboardClient() {
         router.push("/login");
     }
 
-    const hasFilters = statusFilter || priorityFilter || categoryFilter;
+    const hasFilters = query.statusFilter || query.priorityFilter || query.categoryFilter;
 
+    function getPageNumbers(): (number | "…")[] {
+        if (totalPages <= 7) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+        const pages: (number | "…")[] = [1];
+        if (query.page > 3) pages.push("…");
+        const start = Math.max(2, query.page - 1);
+        const end = Math.min(totalPages - 1, query.page + 1);
+        for (let i = start; i <= end; i++) pages.push(i);
+        if (query.page < totalPages - 2) pages.push("…");
+        pages.push(totalPages);
+        return pages;
+    }
 
     return (
         <main className="min-h-screen px-4 py-8">
@@ -116,8 +129,8 @@ function DashboardClient() {
                 {/* Filters */}
                 <div className="flex flex-wrap gap-3 mb-6">
                     <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
+                        value={query.statusFilter}
+                        onChange={(e) => setQuery(prev => ({ ...prev, statusFilter: e.target.value, page: 1 }))}
                         className="rounded-md border px-3 py-2 text-sm bg-white"
                     >
                         <option value="">All Statuses</option>
@@ -127,8 +140,8 @@ function DashboardClient() {
                     </select>
 
                     <select
-                        value={priorityFilter}
-                        onChange={(e) => setPriorityFilter(e.target.value)}
+                        value={query.priorityFilter}
+                        onChange={(e) => setQuery(prev => ({ ...prev, priorityFilter: e.target.value, page: 1 }))}
                         className="rounded-md border px-3 py-2 text-sm bg-white"
                     >
                         <option value="">All Priorities</option>
@@ -139,8 +152,8 @@ function DashboardClient() {
                     </select>
 
                     <select
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        value={query.categoryFilter}
+                        onChange={(e) => setQuery(prev => ({ ...prev, categoryFilter: e.target.value, page: 1 }))}
                         className="rounded-md border px-3 py-2 text-sm bg-white"
                     >
                         <option value="">All Categories</option>
@@ -153,11 +166,7 @@ function DashboardClient() {
                     {hasFilters && (
                         <Button
                             variant="outline"
-                            onClick={() => {
-                                setStatusFilter("");
-                                setPriorityFilter("");
-                                setCategoryFilter("");
-                            }}
+                            onClick={() => setQuery({ statusFilter: "", priorityFilter: "", categoryFilter: "", page: 1 })}
                             className="text-red-600 hover:bg-red-50 hover:text-red-600"
                         >
                             Clear filters
@@ -168,7 +177,8 @@ function DashboardClient() {
                 {/* Ticket count */}
                 {!isLoading && !error && (
                     <p className="text-sm text-muted-foreground mb-4">
-                        {tickets.length} {tickets.length === 1 ? "ticket" : "tickets"} found
+                        {totalCount} {totalCount === 1 ? "ticket" : "tickets"} found
+                        {totalPages > 1 && ` — page ${query.page} of ${totalPages}`}
                     </p>
                 )}
 
@@ -185,9 +195,9 @@ function DashboardClient() {
 
                 {/* Table */}
                 {!isLoading && !error && tickets.length > 0 && (
-                    <div className="max-h-[70vh] overflow-x-auto overflow-y-auto rounded-lg border">
+                    <div className="overflow-x-auto rounded-lg border">
                         <Table>
-                            <TableHeader className="sticky top-0 z-10 bg-white shadow-sm">
+                            <TableHeader className="bg-white">
                                 <TableRow>
                                     <TableHead className="w-12">#</TableHead>
                                     <TableHead>Subject</TableHead>
@@ -251,6 +261,50 @@ function DashboardClient() {
                     </div>
                 )}
 
+                {!isLoading && !error && tickets.length === 0 && (
+                    <p className="text-sm text-muted-foreground mt-4">No tickets found.</p>
+                )}
+
+                {/*pagination */}
+                {!isLoading && !error && totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-1 mt-6">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setQuery(prev => ({ ...prev, page: prev.page - 1 }))}
+                            disabled={query.page === 1}
+                        >
+                            ← Previous
+                        </Button>
+
+                        {getPageNumbers().map((p, i) =>
+                            p === "…" ? (
+                                <span key={`ellipsis-${i}`} className="px-2 text-muted-foreground select-none">
+                                    …
+                                </span>
+                            ) : (
+                                <Button
+                                    key={p}
+                                    variant={p === query.page ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setQuery(prev => ({ ...prev, page: p }))}
+                                    className="min-w-9"
+                                >
+                                    {p}
+                                </Button>
+                            )
+                        )}
+
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setQuery(prev => ({ ...prev, page: prev.page + 1 }))}
+                            disabled={query.page === totalPages}
+                        >
+                            Next →
+                        </Button>
+                    </div>
+                )}
 
             </div>
 
