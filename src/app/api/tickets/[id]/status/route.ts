@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getAuthHeader } from "../../../../../../lib/server-auth";
 
 export async function PATCH(
@@ -19,6 +20,12 @@ export async function PATCH(
         );
 
         const data = await response.json();
+
+        if (response.ok) {
+            revalidateTag("tickets", { expire: 0 });
+            revalidateTag(`ticket-${id}`, { expire: 0 });
+        }
+
         return NextResponse.json(data, { status: response.status });
     } catch {
         return NextResponse.json(

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAuthHeader } from "../../../../../lib/server-auth";
 
+const TICKETS_CACHE_SECONDS = 60 * 60;
+
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }) {
@@ -10,7 +12,10 @@ export async function GET(
             `${process.env.BACKEND_URL}/api/tickets/${id}`,
             {
                 headers: await getAuthHeader(),
-                cache: "no-store"
+                next: {
+                    revalidate: TICKETS_CACHE_SECONDS,
+                    tags: ["tickets", `ticket-${id}`],
+                },
             }
         );
 

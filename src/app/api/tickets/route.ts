@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getAuthHeader } from "../../../../lib/server-auth";
+
+const TICKETS_CACHE_SECONDS = 60 * 60;
 
 export async function GET(request: Request) {
     try {
@@ -23,7 +26,10 @@ export async function GET(request: Request) {
 
         const response = await fetch(url, {
             headers: await getAuthHeader(),
-            cache: "no-store",
+            next: {
+                revalidate: TICKETS_CACHE_SECONDS,
+                tags: ["tickets"],
+            },
         });
 
         const data = await response.json();
