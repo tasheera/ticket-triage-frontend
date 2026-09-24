@@ -42,7 +42,7 @@ function SubmitPage({ }: Props) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets`, {
+      const response = await fetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ customerName, customerEmail, subject, description })
