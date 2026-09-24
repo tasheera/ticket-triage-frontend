@@ -5,8 +5,12 @@ export async function getAuthHeader() {
 
     const token = cookieStore.get("auth-token")?.value;
 
+    if (!token) {
+        return null;
+    }
+
     return {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
+        Authorization: `Bearer ${token}`,
     }
 }

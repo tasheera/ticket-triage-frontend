@@ -9,12 +9,20 @@ export async function PATCH(
     try {
         const { id } = await params;
         const body = await request.json();
+        const authHeader = await getAuthHeader();
+
+        if (!authHeader) {
+            return NextResponse.json(
+                { message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
 
         const response = await fetch(
             `${process.env.BACKEND_URL}/api/tickets/${id}/status`,
             {
                 method: "PATCH",
-                headers: await getAuthHeader(),
+                headers: authHeader,
                 body: JSON.stringify(body),
             }
         );

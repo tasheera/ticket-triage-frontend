@@ -8,10 +8,19 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
+        const authHeader = await getAuthHeader();
+
+        if (!authHeader) {
+            return NextResponse.json(
+                { message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         const response = await fetch(
             `${process.env.BACKEND_URL}/api/tickets/${id}`,
             {
-                headers: await getAuthHeader(),
+                headers: authHeader,
                 next: {
                     revalidate: TICKETS_CACHE_SECONDS,
                     tags: ["tickets", `ticket-${id}`],

@@ -23,9 +23,17 @@ export async function GET(request: Request) {
 
         const queryString = params.toString();
         const url = `${process.env.BACKEND_URL}/api/tickets${queryString ? `?${queryString}` : ""}`;
+        const authHeader = await getAuthHeader();
+
+        if (!authHeader) {
+            return NextResponse.json(
+                { message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
 
         const response = await fetch(url, {
-            headers: await getAuthHeader(),
+            headers: authHeader,
             next: {
                 revalidate: TICKETS_CACHE_SECONDS,
                 tags: ["tickets"],
