@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
-import { getAuthHeader } from "../../../../lib/server-auth";
+import { getAuthHeader } from "@/lib/server/server-auth";
 
 const TICKETS_CACHE_SECONDS = 60 * 60;
 
