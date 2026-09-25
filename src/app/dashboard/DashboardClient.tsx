@@ -10,9 +10,13 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { priorityColors, sentimentColors, statusColors } from "@/lib/ticketStyles";
 import { Ticket, PagedResponse } from "@/types/ticket";
+
+type DashboardClientProps = {
+    initialData: PagedResponse<Ticket> | null;
+};
 
 
 // const sleep = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
@@ -28,7 +32,7 @@ import { Ticket, PagedResponse } from "@/types/ticket";
 
 const PAGE_SIZE = 20;
 
-function DashboardClient() {
+function DashboardClient({ initialData }: DashboardClientProps) {
 
     const [query, setQuery] = useState({
         statusFilter: "",
@@ -37,16 +41,22 @@ function DashboardClient() {
         page: 1,
     });
 
-    const [tickets, setTickets] = useState<Ticket[]>([]);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
+    const [tickets, setTickets] = useState<Ticket[]>(initialData?.items ?? []);
+    const [totalPages, setTotalPages] = useState(initialData?.totalPages ?? 1);
+    const [totalCount, setTotalCount] = useState(initialData?.totalCount ?? 0);
 
     const router = useRouter();
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(!initialData);
     const [error, setError] = useState<string | null>(null);
 
+    const isFirstRender = useRef(true);
+
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            if (initialData) return;
+        }
         fetchTickets();
     }, [query]);
 
