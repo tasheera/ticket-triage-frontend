@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { priorityColors, sentimentColors, statusColors } from "@/lib/ticketStyles";
 import { Ticket } from "@/types/ticket";
+import Link from "next/link";
 
 export default function TicketDetailClient({ id, initialTicket }: { id: string; initialTicket: Ticket | null }) {
   const router = useRouter();
@@ -106,12 +107,14 @@ export default function TicketDetailClient({ id, initialTicket }: { id: string; 
 
       {/*header */}
       <div className="flex items-center justify-between mb-6">
-        <Button
-          variant="outline"
-          onClick={() => router.push("/dashboard")}
+        {/* Apply the variant style directly onto the Link */}
+        <Link
+          href="/dashboard"
+          className={buttonVariants({ variant: "outline" })}
         >
           ← Back
-        </Button>
+        </Link>
+
         <span className="text-sm text-muted-foreground">
           Ticket #{ticket.id}
         </span>

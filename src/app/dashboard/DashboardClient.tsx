@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'
 import { priorityColors, sentimentColors, statusColors } from "@/lib/ticketStyles";
 import { Ticket, PagedResponse } from "@/types/ticket";
+import Link from 'next/link';
 
 type DashboardClientProps = {
     initialData: PagedResponse<Ticket> | null;
@@ -223,11 +224,15 @@ function DashboardClient({ initialData }: DashboardClientProps) {
                                 {tickets.map((ticket) => (
                                     <TableRow
                                         key={ticket.id}
-                                        onClick={() => router.push(`/dashboard/${ticket.id}`)}
-                                        className="cursor-pointer hover:bg-muted/50 transition-colors even:bg-muted/20"
+                                        className="relative hover:bg-muted/50 transition-colors even:bg-muted/20"
                                     >
                                         <TableCell className="text-muted-foreground">
-                                            {ticket.id}
+                                            <Link
+                                                href={`/dashboard/${ticket.id}`}
+                                                className="focus:outline-none after:absolute after:inset-0 after:z-10"
+                                            >
+                                                {ticket.id}
+                                            </Link>
                                         </TableCell>
                                         <TableCell className="font-medium max-w-50 truncate">
                                             {ticket.subject}
@@ -262,7 +267,7 @@ function DashboardClient({ initialData }: DashboardClientProps) {
                                             </span>
                                         </TableCell>
                                         <TableCell className="hidden lg:table-cell text-muted-foreground whitespace-nowrap">
-                                            {new Date(ticket.createdAt).toLocaleDateString()}
+                                            {new Date(ticket.createdAt).toLocaleDateString("en-GB")}
                                         </TableCell>
                                     </TableRow>
                                 ))}
