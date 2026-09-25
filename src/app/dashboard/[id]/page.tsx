@@ -24,7 +24,6 @@ async function TicketDetailPage({
             `${process.env.BACKEND_URL}/api/tickets/${id}`,
             {
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
                 next: { revalidate: 3600, tags: ["tickets", `ticket-${id}`] },
@@ -34,7 +33,9 @@ async function TicketDetailPage({
         if (res.ok) {
             initialTicket = await res.json();
         }
-    } catch {
+    } catch(err) {
+        console.error(`[TicketDetailPage] Failed to fetch ticket ${id}:`, err);
+
 
     }
 

@@ -32,8 +32,8 @@ async function Dashboard() {
     if (res.ok) {
       initialData = await res.json();
     }
-  } catch {
-
+  } catch(err) {
+    console.error("[DashboardPage] Failed to load tickets", err)
   }
 
   return (
