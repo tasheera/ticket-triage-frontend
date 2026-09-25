@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import TicketDetailClient from './TicketDetailClient';
+import { Ticket } from "@/types/ticket";
 
 async function TicketDetailPage({
     params,
@@ -16,7 +17,28 @@ async function TicketDetailPage({
         redirect("/login");
     }
 
-    return <TicketDetailClient id={id} />;
+    let initialTicket: Ticket | null = null;
+
+    try {
+        const res = await fetch(
+            `${process.env.BACKEND_URL}/api/tickets/${id}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                next: { revalidate: 3600, tags: ["tickets", `ticket-${id}`] },
+            }
+        );
+
+        if (res.ok) {
+            initialTicket = await res.json();
+        }
+    } catch {
+
+    }
+
+    return <TicketDetailClient id={id} initialTicket={initialTicket} />;
 }
 
 export default TicketDetailPage

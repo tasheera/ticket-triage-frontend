@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { priorityColors, sentimentColors, statusColors } from "@/lib/ticketStyles";
 import { Ticket } from "@/types/ticket";
 
-export default function TicketDetailClient({ id }: { id: string }) {
+export default function TicketDetailClient({ id, initialTicket }: { id: string; initialTicket: Ticket | null }) {
   const router = useRouter();
-  const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [ticket, setTicket] = useState<Ticket | null>(initialTicket);
+  const [isLoading, setIsLoading] = useState(!initialTicket);
   const [error, setError] = useState<string | null>(null);
+
+  const isFirstRender = useRef(true);
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (initialTicket) return;
+    }
     fetchTicket();
   }, [id]);
 
