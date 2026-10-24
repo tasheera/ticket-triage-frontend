@@ -23,7 +23,7 @@ export default function LoginForm() {
             newErrors.loginEmail = "Email is required";
         }
 
-        if (!password.trim()) {
+        if (password.length === 0) {
             newErrors.password = "Password is required";
         }
 
@@ -77,17 +77,45 @@ export default function LoginForm() {
                         <div className='flex flex-col gap-1'>
                             <Label htmlFor='loginEmail'>Email Address</Label>
                             <div>
-                                <Input id="loginEmail" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} type='email' />
+                                <Input
+                                    id="loginEmail"
+                                    name="email"
+                                    value={loginEmail}
+                                    onChange={(e) => setLoginEmail(e.target.value)}
+                                    type="email"
+                                    autoComplete="username"
+                                    required
+                                    aria-invalid={!!error.loginEmail}
+                                    aria-describedby={error.loginEmail ? "login-email-error" : undefined}
+                                />
                                 <div className='min-h-5'>
-                                    {error.loginEmail && <p className='text-sm text-red-600'>{error.loginEmail}</p>}
+                                    {error.loginEmail && (
+                                        <p id="login-email-error" className='text-sm text-red-600'>
+                                            {error.loginEmail}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <div className='flex flex-col gap-1'>
-                            <Label htmlFor='passoword'>Passoword</Label>
-                            <Input id='passoword' value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <Label htmlFor='password'>Password</Label>
+                            <Input
+                                id="password"
+                                name="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                type="password"
+                                autoComplete="current-password"
+                                required
+                                aria-invalid={!!error.password}
+                                aria-describedby={error.password ? "password-error" : undefined}
+                            />
                             <div className='min-h-5'>
-                                {error.password && <p className='text-sm text-red-600'>{error.password}</p>}
+                                {error.password && (
+                                    <p id="password-error" className='text-sm text-red-600'>
+                                        {error.password}
+                                    </p>
+                                )}
                             </div>
 
                         </div>
