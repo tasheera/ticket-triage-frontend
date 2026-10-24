@@ -1,20 +1,20 @@
 export const statusColors: Record<string, string> = {
-  Open: "bg-blue-100 text-blue-700",
-  InProgress: "bg-purple-100 text-purple-700",
-  Resolved: "bg-green-100 text-green-700",
+  Open: "bg-slate-100 text-slate-600",
+  InProgress: "bg-blue-50 text-blue-700",
+  Resolved: "bg-emerald-50 text-emerald-700",
 };
 
 export const priorityColors: Record<string, string> = {
-  Urgent: "bg-red-100 text-red-700",
-  High: "bg-orange-100 text-orange-700",
-  Medium: "bg-yellow-100 text-yellow-700",
-  Low: "bg-green-100 text-green-700",
-  Unclassified: "bg-gray-100 text-gray-600",
+  Urgent: "bg-red-50 text-red-700 ring-1 ring-inset ring-red-100",
+  High: "text-amber-700",
+  Medium: "text-slate-600",
+  Low: "text-slate-500",
+  Unclassified: "text-slate-500",
 };
 
 export const sentimentColors: Record<string, string> = {
-  Frustrated: "bg-red-50 text-red-600",
-  Neutral: "bg-gray-100 text-gray-600",
-  Positive: "bg-green-50 text-green-700",
-  Unclassified: "bg-gray-100 text-gray-500",
+  Frustrated: "text-amber-700",
+  Neutral: "text-slate-600",
+  Positive: "text-emerald-700",
+  Unclassified: "text-slate-600",
 };
