@@ -39,7 +39,7 @@ async function TicketDetailPage({
 
     }
 
-    return <TicketDetailClient id={id} initialTicket={initialTicket} />;
+    return <TicketDetailClient key={id} id={id} initialTicket={initialTicket} />;
 }
 
 export default TicketDetailPage
